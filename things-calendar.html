@@ -1,44 +1,84 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel='stylesheet' href='../fullcalendar/dist/fullcalendar.min.css'/>
-<link rel="import" href="../fullcalendar-calendar/fullcalendar-calendar.html">
 <link rel="import" href="../fullcalendar-calendar/fullcalendar-theme.html">
+<link rel="import" href="../fullcalendar-calendar/fullcalendar-calendar.html">
 <link rel="import" href="../things-ajax/things-ajax.html">
+<!-- 꼭 fullcalendar-calendar 뒤에 임포트 한다.-->
+<script src="../fullcalendar/dist/locale-all.js"></script>
+
 
 <dom-module id="things-calendar">
   <template>
     <content id="headerView" select=".header"></content>
     <things-ajax id="schedule"
+                 query-fields ="[[queryFields]]"
                  resource-url="[[scheduleUrl]]"
-                 on-things-ajax-response="handleScheduleResponse"
+                 on-things-ajax-response="_handleScheduleResponse"
                  auto>
     </things-ajax>
     <fullcalendar-calendar
       id ="calendar"
       options="[[options]]"
-      on-event-click="handleEventClick"
-      on-day-click="notifyDayClick"
+      on-event-click="_handleEventClick"
+      on-day-click="_notifyDayClick"
     ></fullcalendar-calendar>
   </template>
 
   <script>
     Polymer({
       properties:{
+        /**
+         * view options
+         * please refer https://fullcalendar.io/docs/
+         * @type {Object}
+         */
         options:{
           type: Object,
           value:{}
         },
-        titleField :{
+        /**
+         * for event title field of response after schedule url called and ajax returned
+         * @type {String}
+         */
+        eventTitleField :{
           type: String,
           value:'name'
         },
-        startField :{
+        /**
+         * for event start datetime field of response after schedule url called and ajax returned
+         * @type {String}
+         */
+        eventStartField :{
           type: String,
           value:'plan_date'
         },
+        /**
+         * condition for schedule url calling
+         * @type {Object}
+         */
+        eventQueryFields:{
+          type: Object
+        },
+        /**
+         * condition for schedule url calling that add starttime and endtime
+         * @type {Array}
+         */
+        queryFields:{
+          type: Array,
+          computed: '_onEventQueryFieldChange(eventQueryFields)'
+        },
+        /**
+         * url for get resource data
+         * @type {String}
+         */
         scheduleUrl:{
           type: String,
           value:'machine_checks'
         },
+        /**
+         * for render background color
+         * @type {function}
+         */
         eventBackgroundColorRender:{
           type: Object,
           value: function(){
@@ -46,6 +86,10 @@
             return fn
           }
         },
+        /**
+         * for render font color
+         * @type {function}
+         */
         eventFontColorRender:{
           type: Object,
           value: function(){
@@ -53,16 +97,41 @@
             return fn
           }
         },
+        /**
+         * for render border color
+         * @type {function}
+         */
         eventBorderColorRender:{
           type: Object,
           value: function(){
             var fn = function(event,calendar){return event}
             return fn
           }
+        },
+        /**
+         * when locale changed view must be changed
+         * @type {String}
+         */
+        locale:{
+          type: String,
+          observer:'_onLocaleChange'
         }
       },
       ready: function(){
 
+      },
+      _onLocaleChange: function(locale){
+        this.$.calendar._calendar.fullCalendar('option', 'locale', locale);
+      },
+      _onEventQueryFieldChange: function(eventQueryFields){
+        eventQueryFields = (typeof(eventQueryFields) == 'string') ? JSON.parse(eventQueryFields): eventQueryFields;
+
+        eventQueryFields.push({'name':'plan_date','operator':'eq','value':moment().format('YYYYMMDD')});
+        eventQueryFields.push({'name':'plan_date','operator':'eq','value':moment().add(30,'days').calendar().format('YYYYMMDD')});
+
+        eventQueryFields = JSON.stringify(eventQueryFields);
+
+        return eventQueryFields
       },
       // change view use value of target element with named 'view' attribute
       changeView : function(event) {
@@ -79,42 +148,54 @@
         var calendar = this.$.calendar;
         calendar.next(); 
       },
-      //
-      notifyDayClick : function(event) {
-        this.fire('things-day-tap', event.detail);
-      },
-      handleEventClick: function(event){
-        this.fire('things-event-tap', event.detail.event);
-      },
       getSchedule: function(event){
         this.$['schedule'].generateRequest();
       },
-      handleScheduleResponse: function(event){
+      // 
+      _handleScheduleResponse: function(event){
         var schedule = event.detail.items;
         var self = this;
-        this.events = schedule.map(function(object){
-          var mEvent ={};
-          mEvent.title = object[self.titleField];
-          mEvent.start = moment(object[self.startField]);
+        var eventDetail = {
+          'thingsCalendar': this,
+          'calendar': this.$.calendar,
+          'event' : schedule
+        };
 
-          mEvent.borderColor = '#ffffff';
-          mEvent.allDay =true
-          mEvent.schedule= object;
-          mEvent.backgroundColor = self.eventBackgroundColorRender(object,self.$.calendar);
-          mEvent.textColor = self.eventFontColorRender(object,self.$.calendar);
-          mEvent.borderColor = self.eventBorderColorRender(object,self.$.calendar);
+        var evt = this.fire('things-calendar-event-response',eventDetail, { cancelable: true });
 
-          return mEvent
-        });
+        if (!evt.defaultPrevented) {
+          this.events = schedule.map(function(object){
+            var mEvent ={};
+            mEvent.title = object[self.eventTitleField];
+            mEvent.start = moment(object[self.eventStartField]);
+
+            mEvent.borderColor = '#ffffff';
+            mEvent.allDay =true
+            mEvent.schedule= object;
+            mEvent.backgroundColor = self.eventBackgroundColorRender(object,self.$.calendar);
+            mEvent.textColor = self.eventFontColorRender(object,self.$.calendar);
+            mEvent.borderColor = self.eventBorderColorRender(object,self.$.calendar);
+
+            return mEvent
+          });
 
 
-        var headerView= {
-          right: 'prev,next today',
-          center: 'title',
-          left: 'month,agendaWeek,agendaDay,listWeek'
+          var headerView= {
+            right: 'prev,next today',
+            center: 'title',
+            left: 'month,agendaWeek,agendaDay,listWeek'
+          }
+          var options = {'header':headerView,'weekends':true,'locale':this.locale,'events':this.events};
+          this.set('options',options);
         }
-        var options = {'header':headerView,'events':this.events};
-        this.set('options',options);
+      },
+      //
+      _notifyDayClick : function(event) {
+        this.fire('things-day-tap', event.detail);
+      },
+      // 
+      _handleEventClick: function(event){
+        this.fire('things-event-tap', event.detail.event);
       }
     })
   </script>
