@@ -1,18 +1,120 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel='stylesheet' href='../fullcalendar/dist/fullcalendar.min.css'/>
+<link rel="import" href="../fullcalendar-calendar/fullcalendar-calendar.html">
+<link rel="import" href="../fullcalendar-calendar/fullcalendar-theme.html">
+<link rel="import" href="../things-ajax/things-ajax.html">
 
 <dom-module id="things-calendar">
   <template>
-    <h1>[[title]]</h1>
+    <content id="headerView" select=".header"></content>
+    <things-ajax id="schedule"
+                 resource-url="[[scheduleUrl]]"
+                 on-things-ajax-response="handleScheduleResponse"
+                 auto>
+    </things-ajax>
+    <fullcalendar-calendar
+      id ="calendar"
+      options="[[options]]"
+      on-event-click="handleEventClick"
+      on-day-click="notifyDayClick"
+    ></fullcalendar-calendar>
   </template>
 
   <script>
     Polymer({
-      properties: {
-
-        title: {
+      properties:{
+        options:{
+          type: Object,
+          value:{}
+        },
+        titleField :{
           type: String,
-          value: 'Things Calendar'
+          value:'name'
+        },
+        startField :{
+          type: String,
+          value:'plan_date'
+        },
+        scheduleUrl:{
+          type: String,
+          value:'machine_checks'
+        },
+        eventBackgroundColorRender:{
+          type: Object,
+          value: function(){
+            var fn = function(event,calendar){return event}
+            return fn
+          }
+        },
+        eventFontColorRender:{
+          type: Object,
+          value: function(){
+            var fn = function(event,calendar){return event}
+            return fn
+          }
+        },
+        eventBorderColorRender:{
+          type: Object,
+          value: function(){
+            var fn = function(event,calendar){return event}
+            return fn
+          }
         }
+      },
+      ready: function(){
+
+      },
+      // change view use value of target element with named 'view' attribute
+      changeView : function(event) {
+        var calendar = this.$.calendar;
+          calendar.changeView(event.target.attributes.getNamedItem('view').value);
+      },
+      // show previous month, week, day
+      previous : function() {
+        var calendar = this.$.calendar;
+        calendar.previous(); 
+      },
+      // show next month, week, day
+      next : function() {
+        var calendar = this.$.calendar;
+        calendar.next(); 
+      },
+      //
+      notifyDayClick : function(event) {
+        this.fire('things-day-tap', event.detail);
+      },
+      handleEventClick: function(event){
+        this.fire('things-event-tap', event.detail.event);
+      },
+      getSchedule: function(event){
+        this.$['schedule'].generateRequest();
+      },
+      handleScheduleResponse: function(event){
+        var schedule = event.detail.items;
+        var self = this;
+        this.events = schedule.map(function(object){
+          var mEvent ={};
+          mEvent.title = object[self.titleField];
+          mEvent.start = moment(object[self.startField]);
+
+          mEvent.borderColor = '#ffffff';
+          mEvent.allDay =true
+          mEvent.schedule= object;
+          mEvent.backgroundColor = self.eventBackgroundColorRender(object,self.$.calendar);
+          mEvent.textColor = self.eventFontColorRender(object,self.$.calendar);
+          mEvent.borderColor = self.eventBorderColorRender(object,self.$.calendar);
+
+          return mEvent
+        });
+
+
+        var headerView= {
+          right: 'prev,next today',
+          center: 'title',
+          left: 'month,agendaWeek,agendaDay,listWeek'
+        }
+        var options = {'header':headerView,'events':this.events};
+        this.set('options',options);
       }
     })
   </script>
