@@ -1,6 +1,6 @@
 {
   "name": "things-calendar",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "authors": [
     "Hatio Lab. <heartyoh@hatiolab.com>"
   ],
@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.2.0",
-    "fullcalendar-calendar": "^1.1.1",
+    "fullcalendar-calendar": "ThingsElements/things-fullcalendar-calendar",
     "things-ajax": "ThingsElements/things-ajax",
     "fullcalendar": "^3.0.1"
   },
