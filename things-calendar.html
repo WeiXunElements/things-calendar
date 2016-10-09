@@ -6,197 +6,209 @@
 <!-- 꼭 fullcalendar-calendar 뒤에 임포트 한다.-->
 <script src="../fullcalendar/dist/locale-all.js"></script>
 
+<!--
+  캘린더 
+-->
 
 <dom-module id="things-calendar">
   <template>
     <content id="headerView" select=".header"></content>
+
     <things-ajax id="schedule"
                  query-fields ="[[queryFields]]"
                  resource-url="[[scheduleUrl]]"
+                 resource-action="index"
                  on-things-ajax-response="_handleScheduleResponse"
                  auto>
     </things-ajax>
+    
     <fullcalendar-calendar
       id ="calendar"
       options="[[options]]"
       on-event-click="_handleEventClick"
-      on-day-click="_notifyDayClick"
-    ></fullcalendar-calendar>
+      on-day-click="_notifyDayClick">
+    </fullcalendar-calendar>
   </template>
 
   <script>
     Polymer({
-      properties:{
+
+      properties: {
         /**
          * view options
          * please refer https://fullcalendar.io/docs/
          * @type {Object}
          */
-        options:{
+        options: {
           type: Object,
-          value:{}
+          value: {}
         },
+
         /**
          * for event title field of response after schedule url called and ajax returned
          * @type {String}
          */
-        eventTitleField :{
+        eventTitleField: {
           type: String,
-          value:'name'
+          value: 'name'
         },
+        
         /**
          * for event start datetime field of response after schedule url called and ajax returned
          * @type {String}
          */
-        eventStartField :{
+        eventStartField: {
           type: String,
-          value:'plan_date'
+          value: 'plan_date'
         },
+        
         /**
          * condition for schedule url calling
          * @type {Object}
          */
-        eventQueryFields:{
+        eventQueryFields: {
           type: Object
         },
+        
         /**
          * condition for schedule url calling that add starttime and endtime
          * @type {Array}
          */
-        queryFields:{
+        queryFields: {
           type: Array,
           computed: '_onEventQueryFieldChange(eventQueryFields)'
         },
+
         /**
          * url for get resource data
          * @type {String}
          */
-        scheduleUrl:{
+        scheduleUrl: {
           type: String,
-          value:'machine_checks'
+          value: 'machine_checks'
         },
+
         /**
          * for render background color
          * @type {function}
          */
-        eventBackgroundColorRender:{
+        eventBackgroundColorRender: {
           type: Object,
-          value: function(){
-            var fn = function(event,calendar){return event}
-            return fn
+          value: function() {
+            return function(event, calendar) { return event };
           }
         },
+
         /**
          * for render font color
          * @type {function}
          */
-        eventFontColorRender:{
+        eventFontColorRender: {
           type: Object,
-          value: function(){
-            var fn = function(event,calendar){return event}
-            return fn
+          value: function() {
+            return function(event, calendar) { return event };
           }
         },
+
         /**
          * for render border color
          * @type {function}
          */
-        eventBorderColorRender:{
+        eventBorderColorRender: {
           type: Object,
-          value: function(){
-            var fn = function(event,calendar){return event}
-            return fn
+          value: function() {
+            return function(event, calendar) { return event };
           }
         },
+
         /**
          * when locale changed view must be changed
          * @type {String}
          */
-        locale:{
+        locale: {
           type: String,
-          observer:'_onLocaleChange'
+          observer: '_onLocaleChange'
         }
       },
-      ready: function(){
 
-      },
-      _onLocaleChange: function(locale){
+      _onLocaleChange: function(locale) {
         this.$.calendar._calendar.fullCalendar('option', 'locale', locale);
       },
-      _onEventQueryFieldChange: function(eventQueryFields){
+
+      _onEventQueryFieldChange: function(eventQueryFields) {
         eventQueryFields = (typeof(eventQueryFields) == 'string') ? JSON.parse(eventQueryFields): eventQueryFields;
 
-        eventQueryFields.push({'name':'plan_date','operator':'eq','value':moment().format('YYYYMMDD')});
-        eventQueryFields.push({'name':'plan_date','operator':'eq','value':moment().add(30,'days').calendar().format('YYYYMMDD')});
+        //eventQueryFields.push({name: this.eventStartField, operator: 'eq', value: moment().format('YYYYMMDD')});
+        //eventQueryFields.push({name: this.eventStartField, operator: 'eq', value: moment().add(30,'days').calendar().format('YYYYMMDD')});
 
         eventQueryFields = JSON.stringify(eventQueryFields);
-
         return eventQueryFields
       },
+
       // change view use value of target element with named 'view' attribute
-      changeView : function(event) {
+      changeView: function(event) {
         var calendar = this.$.calendar;
-          calendar.changeView(event.target.attributes.getNamedItem('view').value);
+        calendar.changeView(event.target.attributes.getNamedItem('view').value);
       },
+
       // show previous month, week, day
-      previous : function() {
-        var calendar = this.$.calendar;
-        calendar.previous(); 
+      previous: function() {
+        this.$.calendar.previous();
       },
+      
       // show next month, week, day
-      next : function() {
-        var calendar = this.$.calendar;
-        calendar.next(); 
+      next: function() {
+        this.$.calendar.next();
       },
-      getSchedule: function(event){
+      
+      getSchedule: function(event) {
         this.$['schedule'].generateRequest();
       },
-      // 
-      _handleScheduleResponse: function(event){
+      
+      _handleScheduleResponse: function(event) {
         var schedule = event.detail.items;
-        var self = this;
-        var eventDetail = {
-          'thingsCalendar': this,
-          'calendar': this.$.calendar,
-          'event' : schedule
-        };
-
-        var evt = this.fire('things-calendar-event-response',eventDetail, { cancelable: true });
+        var eventDetail = { thingsCalendar: this, calendar: this.$.calendar, event: schedule };
+        var evt = this.fire('things-calendar-event-response', eventDetail, { cancelable: true });
 
         if (!evt.defaultPrevented) {
-          this.events = schedule.map(function(object){
-            var mEvent ={};
-            mEvent.title = object[self.eventTitleField];
-            mEvent.start = moment(object[self.eventStartField]);
-
-            mEvent.borderColor = '#ffffff';
-            mEvent.allDay =true
-            mEvent.schedule= object;
-            mEvent.backgroundColor = self.eventBackgroundColorRender(object,self.$.calendar);
-            mEvent.textColor = self.eventFontColorRender(object,self.$.calendar);
-            mEvent.borderColor = self.eventBorderColorRender(object,self.$.calendar);
-
-            return mEvent
+          var self = this;
+          this.events = schedule.map(function(object) {
+            return {
+              title : object[self.eventTitleField],
+              start : moment(object[self.eventStartField]),
+              borderColor : '#ffffff',
+              allDay : true,
+              schedule : object,
+              backgroundColor : self.eventBackgroundColorRender(object, self.$.calendar),
+              textColor : self.eventFontColorRender(object, self.$.calendar),
+              borderColor : self.eventBorderColorRender(object, self.$.calendar)
+            };
           });
 
-
-          var headerView= {
+          var headerView = {
             right: 'prev,next today',
             center: 'title',
             left: 'month,agendaWeek,agendaDay,listWeek'
           }
-          var options = {'header':headerView,'weekends':true,'locale':this.locale,'events':this.events};
-          this.set('options',options);
+
+          var options = {
+            header: headerView,
+            weekends: true,
+            locale: this.locale,
+            events: this.events
+          };
+
+          this.set('options', options);
         }
       },
-      //
+
       _notifyDayClick : function(event) {
         this.fire('things-day-tap', event.detail);
       },
-      // 
-      _handleEventClick: function(event){
+
+      _handleEventClick: function(event) {
         this.fire('things-event-tap', event.detail.event);
       }
-    })
+    });
   </script>
 </dom-module>
