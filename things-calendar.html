@@ -57,11 +57,19 @@
          * for event start datetime field of response after schedule url called and ajax returned
          * @type {String}
          */
-        eventStartField: {
+        eventTimeField: {
           type: String,
           value: 'plan_date'
         },
-        
+
+        /**
+         * for event start datetime field of response after schedule url called and ajax returned
+         * @type {String}
+         */
+        eventTimeFormat:{
+          type: String,
+          value: 'YYYY-MM-DD'
+        },
         /**
          * condition for schedule url calling
          * @type {Object}
@@ -136,15 +144,28 @@
       },
 
       _onEventQueryFieldChange: function(eventQueryFields) {
-        eventQueryFields = (typeof(eventQueryFields) == 'string') ? JSON.parse(eventQueryFields): eventQueryFields;
-
-        //eventQueryFields.push({name: this.eventStartField, operator: 'eq', value: moment().format('YYYYMMDD')});
-        //eventQueryFields.push({name: this.eventStartField, operator: 'eq', value: moment().add(30,'days').calendar().format('YYYYMMDD')});
+        if(eventQueryFields){
+          eventQueryFields = (typeof(eventQueryFields) == 'string') ? JSON.parse(eventQueryFields): eventQueryFields;
+        }else{
+          eventQueryFields =[];
+        }
+        eventQueryFields.push({name: this.eventTimeField, operator: 'gte', value: this._calendarStartDayOfMonth()});
+        eventQueryFields.push({name: this.eventTimeField, operator: 'lte', value: this._calendarEndDayOfMonth()});
 
         eventQueryFields = JSON.stringify(eventQueryFields);
         return eventQueryFields
       },
+      _calendarStartDayOfMonth: function(){
+        var firstDayOfMonth = moment().startOf('month');
+        var weekOfFirstday = firstDayOfMonth.day();
+        return firstDayOfMonth.add(-weekOfFirstday,'day').format(this.eventTimeFormat);
 
+      },
+      _calendarEndDayOfMonth: function(){
+        var lastDayOfMonth = moment().endOf('month');
+        var weekOfLastday = lastDayOfMonth.day();
+        return lastDayOfMonth.add(6-weekOfLastday,'day').format(this.eventTimeFormat);
+      },
       // change view use value of target element with named 'view' attribute
       changeView: function(event) {
         var calendar = this.$.calendar;
@@ -167,38 +188,40 @@
       
       _handleScheduleResponse: function(event) {
         var schedule = event.detail.items;
-        var eventDetail = { thingsCalendar: this, calendar: this.$.calendar, event: schedule };
-        var evt = this.fire('things-calendar-event-response', eventDetail, { cancelable: true });
+        if(schedule){
+          var eventDetail = { thingsCalendar: this, calendar: this.$.calendar, event: schedule };
+          var evt = this.fire('things-calendar-event-response', eventDetail, { cancelable: true });
 
-        if (!evt.defaultPrevented) {
-          var self = this;
-          this.events = schedule.map(function(object) {
-            return {
-              title : object[self.eventTitleField],
-              start : moment(object[self.eventStartField]),
-              borderColor : '#ffffff',
-              allDay : true,
-              schedule : object,
-              backgroundColor : self.eventBackgroundColorRender(object, self.$.calendar),
-              textColor : self.eventFontColorRender(object, self.$.calendar),
-              borderColor : self.eventBorderColorRender(object, self.$.calendar)
+          if (!evt.defaultPrevented) {
+            var self = this;
+            this.events = schedule.map(function(object) {
+              return {
+                title : object[self.eventTitleField],
+                start : moment(object[self.eventStartField]),
+                borderColor : '#ffffff',
+                allDay : true,
+                schedule : object,
+                backgroundColor : self.eventBackgroundColorRender(object, self.$.calendar),
+                textColor : self.eventFontColorRender(object, self.$.calendar),
+                borderColor : self.eventBorderColorRender(object, self.$.calendar)
+              };
+            });
+
+            var headerView = {
+              right: 'prev,next today',
+              center: 'title',
+              left: 'month,agendaWeek,agendaDay,listWeek'
+            }
+
+            var options = {
+              header: headerView,
+              weekends: true,
+              locale: this.locale,
+              events: this.events
             };
-          });
 
-          var headerView = {
-            right: 'prev,next today',
-            center: 'title',
-            left: 'month,agendaWeek,agendaDay,listWeek'
+            this.set('options', options);
           }
-
-          var options = {
-            header: headerView,
-            weekends: true,
-            locale: this.locale,
-            events: this.events
-          };
-
-          this.set('options', options);
         }
       },
 
