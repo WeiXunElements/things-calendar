@@ -63,7 +63,7 @@
         },
 
         /**
-         * for event start datetime field of response after schedule url called and ajax returned
+         * for event start datetime format field of response after schedule url called and ajax returned
          * @type {String}
          */
         eventTimeFormat:{
@@ -197,7 +197,7 @@
             this.events = schedule.map(function(object) {
               return {
                 title : object[self.eventTitleField],
-                start : moment(object[self.eventStartField]),
+                start : moment(object[self.eventTimeField]),
                 borderColor : '#ffffff',
                 allDay : true,
                 schedule : object,
