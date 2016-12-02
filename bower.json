@@ -19,7 +19,6 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.2.0",
-    "fullcalendar-calendar": "ThingsElements/things-fullcalendar-calendar",
     "things-ajax": "ThingsElements/things-ajax",
     "fullcalendar": "^3.0.1"
   },
