@@ -255,8 +255,10 @@
        * if not evt.defaultPrevented set events use responsed resources
        */
       _handleScheduleResponse: function(event){
-        if(event.detail.items){
-          var eventDetail = { thingsCalendar: this, calendar: this.$.calendar, event: schedule };
+        var schedule =[];
+        schedule = event.detail.items;
+        if(schedule && schedule.length>0){
+          var eventDetail = { thingsCalendar: this, calendar: this._calendar, event: schedule };
           var evt = this.fire('things-calendar-event-response', eventDetail, { cancelable: true });
           if (!evt.defaultPrevented) {
             this.set('events',event.detail.items);
