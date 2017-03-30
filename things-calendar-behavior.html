@@ -17,7 +17,7 @@
                 /**
                  * Fired when a new date-range is rendered, or when the view type switches.
                  * [Documentation](http://fullcalendar.io/docs/display/viewRender/)
-                 *
+                 ****
                  * @event things-calendar-view-render
                  * @param {object} view the View Object for the new view
                  * @param {object} element a jQuery element for the container of the new view
@@ -26,7 +26,7 @@
                 /**
                  * Fired when a rendered date-range needs to be torn down.
                  * [Documentation](http://fullcalendar.io/docs/display/viewDestroy/)
-                 *
+                 ****
                  * @event things-calendar-view-destroy
                  * @param {object} view the View Object for the view that is about to be destroyed
                  * @param {object} element a jQuery element for the container of the view
@@ -35,7 +35,7 @@
                 /**
                  * Fired after the calendar's dimensions have been changed due to the browser window being resized.
                  * [Documentation](http://fullcalendar.io/docs/display/windowResize/)
-                 *
+                 ****
                  * @event things-calendar-window-resize
                  * @param {object} view the current View Object
                  */
@@ -43,7 +43,7 @@
                 /**
                  * Fired when the user clicks on a day.
                  * [Documentation](http://fullcalendar.io/docs/mouse/dayClick/)
-                 *
+                 ****
                  * @event things-calendar-day-tap
                  * @param {object} date moment for the clicked day
                  * @param {object} jsEvent the native JavaScript event with low-level information such as click coordinates
@@ -54,7 +54,7 @@
                 /**
                  * Fired when the user clicks an event.
                  * [Documentation](http://fullcalendar.io/docs/mouse/eventClick/)
-                 *
+                 ****
                  * @event things-calendar-event-tap
                  * @param {object} event an Event Object that holds the event's information (date, title, etc)
                  * @param {object} jsEvent the native JavaScript event with low-level information such as click coordinates
@@ -64,7 +64,7 @@
                 /**
                  * Fired when the user mouses over an event.
                  * [Documentation](http://fullcalendar.io/docs/mouse/eventMouseover/)
-                 *
+                 ****
                  * @event things-calendar-event-mouseover
                  * @param {object} event an Event Object that holds the event's information (date, title, etc)
                  * @param {object} jsEvent the native JavaScript event with low-level information such as click coordinates
@@ -74,7 +74,7 @@
                 /**
                  * Fired when the user mouses out of an event.
                  * [Documentation](http://fullcalendar.io/docs/mouse/eventMouseout/)
-                 *
+                 ****
                  * @event things-calendar-event-mouseout
                  * @param {object} event an Event Object that holds the event's information (date, title, etc)
                  * @param {object} jsEvent the native JavaScript event with low-level information such as click coordinates
@@ -84,7 +84,7 @@
                 /**
                  * Fired after a selection is made.
                  * [Documentation](http://fullcalendar.io/docs/selection/select_callback/)
-                 *
+                 ****
                  * @event things-calendar-select
                  * @param {object} start a Moment indicating the beginning of the selection
                  * @param {object} end a Moment indicating the end of the selection
@@ -96,7 +96,7 @@
                 /**
                  * Fired when the current selection is cleared.
                  * [Documentation](http://fullcalendar.io/docs/selection/unselect_callback/)
-                 *
+                 ****
                  * @event things-calendar-unselect
                  * @param {object} view the current view object
                  * @param {object} jsEvent the primitive JavaScript event with information such as mouse coordinates
@@ -105,7 +105,7 @@
                 /**
                  * Fired after an event has been placed on the calendar in its final position.
                  * [Documentation](http://fullcalendar.io/docs/event_rendering/eventAfterRender/)
-                 *
+                 ****
                  * @event things-calendar-event-after-render
                  * @param {object} event
                  * @param {object} element
@@ -115,7 +115,7 @@
                 /**
                  * Fired after all events have finished rendering.
                  * [Documentation](http://fullcalendar.io/docs/event_rendering/eventAfterAllRender/)
-                 *
+                 ****
                  * @event things-calendar-event-after-all-render
                  * @param {object} view
                  */
@@ -123,7 +123,7 @@
                 /**
                  * Fired before an event's element is removed from the DOM.
                  * [Documentation](http://fullcalendar.io/docs/event_rendering/eventDestroy/)
-                 *
+                 ****
                  * @event things-calendar-event-destroy
                  * @param {object} event the Event Object
                  * @param {object} element a jQuery element that will be removed
@@ -133,7 +133,7 @@
                 /**
                  * Fired when event dragging begins.
                  * [Documentation](http://fullcalendar.io/docs/ui/eventDragStart/)
-                 *
+                 ****
                  * @event things-calendar-event-drag-start
                  * @param {object} event an Event Object that hold the event's information (date, title, etc)
                  * @param {object} jsEvent the native javascript event with low-level information such as click coordinates
@@ -144,7 +144,7 @@
                 /**
                  * Fired when event dragging stops.
                  * [Documentation](http://fullcalendar.io/docs/ui/eventDragStop/)
-                 *
+                 ****
                  * @event things-calendar-event-drag-stop
                  * @param {object} event an Event Object that hold the event's information (date, title, etc)
                  * @param {object} jsEvent the native javascript event with low-level information such as click coordinates
@@ -155,7 +155,7 @@
                 /**
                  * Fired when dragging stops and the event has moved to a different day/time.
                  * [Documentation](http://fullcalendar.io/docs/ui/eventDrop/)
-                 *
+                 ****
                  * @event things-calendar-event-drop
                  * @param {object} event an Event Object that hold the event's information (date, title, etc)
                  * @param {object} delta a Duration Object that represents the amount of time the event was moved by
@@ -167,7 +167,7 @@
                 /**
                  * Fired when event resizing begins.
                  * [Documentation](http://fullcalendar.io/docs/ui/eventResizeStart/)
-                 *
+                 ****
                  * @event things-calendar-event-resize-start
                  * @param {object} event an Event Object that hold the event's information (date, title, etc)
                  * @param {object} jsEvent the native javascript event with low-level information such as click coordinates
@@ -178,7 +178,7 @@
                 /**
                  * Fired when event resizing stops.
                  * [Documentation](http://fullcalendar.io/docs/ui/eventResizeStop/)
-                 *
+                 ****
                  * @event things-calendar-event-resize-stop
                  * @param {object} event an Event Object that hold the event's information (date, title, etc)
                  * @param {object} jsEvent the native javascript event with low-level information such as click coordinates
@@ -189,7 +189,7 @@
                 /**
                  * Fired when resizing stops and the event has changed in duration.
                  * [Documentation](http://fullcalendar.io/docs/ui/eventResize/)
-                 *
+                 ****
                  * @event things-calendar-event-resize
                  * @param {object} event an Event Object that hold the event's information (date, title, etc)
                  * @param {object} delta a Duration Object that represents the amount of time the event's end was extended by
@@ -201,7 +201,7 @@
                 /**
                  * Fired when a valid jQuery UI draggable has been dropped onto the calendar.
                  * [Documentation](http://fullcalendar.io/docs/dropping/drop/)
-                 *
+                 ****
                  * @event things-calendar-drop
                  * @param {object} date the Moment of where the draggable was dropped
                  * @param {object} jsEvent the native javascript event with low-level information such as click coordinates
@@ -212,7 +212,7 @@
                 /**
                  * Fired when an external element, containing event data, is dropped on the calendar.
                  * [Documentation](http://fullcalendar.io/docs/dropping/eventReceive/)
-                 *
+                 ****
                  * @event things-calendar-event-receive
                  * @param {object} event
                  */
@@ -220,26 +220,33 @@
                 /**
                  * Fired when resource fetching starts/stops.
                  * [Documentation](http://fullcalendar.io/docs/resource_data/loading/)
-                 *
+                 ****
                  * @event things-calendar-loading
                  * @param {object} isLoading
                  * @param {object} view
                  */
 
                 /**
-                 * for calendar start end day binding
+                 * for calendar start day binding
+                 * ***
+                 * @type String
                  */
                 startDay: {
                     type: String,
                     notify: true
                 },
+                /**
+                 * for calendar end day binding
+                 * ***
+                 * @type String
+                 */
                 endDay: {
                     type: String,
                     notify: true
                 },
                 /**
                  * The underlying FullCalendar element.
-                 *
+                 ****
                  * @type Object
                  */
                 _calendar: {
@@ -248,6 +255,7 @@
                 },
                 /**
                  * for event start datetime format field of response after schedule url called and ajax returned
+                 ****
                  * @type {String}
                  */
                 timeFormat: {
@@ -256,7 +264,7 @@
                 },
                 /**
                  * Options passed to FullCalendar.
-                 *
+                 ****
                  * @type Object
                  */
                 options: {
@@ -273,6 +281,7 @@
                 },
                 /**
                  * event callbacks
+                 ****
                  * @type {Object}
                  */
                 _callbacks: {
@@ -355,7 +364,7 @@
 
             listeners: {
                 'iron-resize': 'render',
-                'things-calendar-view-render': 'setCalendarStartEndDay'
+                'things-calendar-view-render': '_setCalendarStartEndDay'
             },
 
             ready: function() {
@@ -390,8 +399,12 @@
                     this._calendar.fullCalendar(calendarOptions);
                 }.bind(this));
             },
-
-            setCalendarStartEndDay: function() {
+            /**
+             * set calendar start end day
+             ****
+             * @return {null}
+             */
+            _setCalendarStartEndDay: function() {
                 this.calendarView = this._calendar.fullCalendar('getView');
                 if (this.calendarView) {
                     this.viewTitle = this.calendarView.title;
@@ -401,7 +414,9 @@
             },
             /**
              * Moves the calendar one step forward (either by a month, week, or day).
+             *****
              * [Documentation](http://fullcalendar.io/docs/current_date/next/)
+             * @return {null}
              */
             next: function() {
                 this._calendar.fullCalendar('next');
@@ -409,7 +424,9 @@
 
             /**
              * Moves the calendar one step back (either by a month, week, or day).
+             ****
              * [Documentation](http://fullcalendar.io/docs/current_date/prev/)
+             * @return {null}
              */
             previous: function() {
                 this._calendar.fullCalendar('prev');
@@ -418,7 +435,7 @@
             /**
              * Immediately switches to a different view.
              * [Documentation](http://fullcalendar.io/docs/views/changeView/)
-             *
+             ****
              * @param {string} viewName One of the [available views](http://fullcalendar.io/docs/views/Available_Views/)
              */
             changeView: function(viewName) {
@@ -428,6 +445,7 @@
             /**
              * Immediately forces the calendar to render and/or readjusts its size.
              * [Documentation](http://fullcalendar.io/docs/display/render/)
+             *****
              */
             render: function() {
                 this._calendar.fullCalendar('render');
@@ -436,6 +454,7 @@
             /**
              * Navigates the calendar to today.
              * [Documentation](http://fullcalendar.io/docs/current_date/today/)
+             *****
              */
             today: function() {
                 this._calendar.fullCalendar('today');
@@ -444,6 +463,7 @@
             /**
              * Navigates the calendar to specific date.
              * [Documentation](http://fullcalendar.io/docs/current_date/gotoDate/)
+             ****
              */
             gotoDate: function(date) {
                 this._calendar.fullCalendar('gotoDate', date);
@@ -452,6 +472,7 @@
             /**
              * Dynamically adds an event source.
              * [Documentation](http://fullcalendar.io/docs/event_data/addEventSource/)
+             *****
              */
             addEventSource: function(source) {
                 this._calendar.fullCalendar('addEventSource', source);
@@ -460,6 +481,7 @@
             /**
              * Dynamically removes an event source.
              * [Documentation](http://fullcalendar.io/docs/event_data/removeEventSource/)
+             ****
              */
             removeEventSource: function(source) {
                 this._calendar.fullCalendar('removeEventSource', source);
@@ -467,6 +489,7 @@
 
             /**
              * Dynamically removes all event sources.
+             *****
              * [Documentation](http://fullcalendar.io/docs/event_data/removeEventSources/)
              */
             removeEventSources: function(sources) {
@@ -475,13 +498,17 @@
 
             /**
              * Retrieves all Event Source Objects.
+             *****
              * [Documentation](http://fullcalendar.io/docs/event_data/getEventSources/)
+             * @return {Array} EventSources
              */
             getEventSources: function() {
                 return this._calendar.fullCalendar('getEventSources');
             },
             /**
-             * Get rendered Events
+             * Get rendered events
+             *****
+             * @return {Array} events
              */
             getClientEvents: function() {
                 return this._calendar.fullCalendar('clientEvents');
@@ -489,6 +516,8 @@
             /**
              * Reports changes to an event and renders them on the calendar.
              * [Documentation](http://fullcalendar.io/docs/event_data/updateEvent/)
+             ****
+             * @param {Object} event
              */
             updateEvent: function(event) {
                 this._calendar.fullCalendar('updateEvent', event);
@@ -497,6 +526,8 @@
             /**
              * Removes events from the calendar.
              * [Documentation](http://fullcalendar.io/docs/event_data/removeEvents/)
+             ****
+             * @param {Array} events
              */
             removeEvents: function(events) {
                 this._calendar.fullCalendar('removeEvents', events);
@@ -505,6 +536,7 @@
             /**
              * Refetches events from all sources and rerenders them on the screen.
              * [Documentation](http://fullcalendar.io/docs/event_data/refetchEvents/)
+             * ***
              */
             refetchEvents: function() {
                 this._calendar.fullCalendar('refetchEvents');

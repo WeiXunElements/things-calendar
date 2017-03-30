@@ -72,19 +72,19 @@
             <div class="title">[[viewTitle]]</div>
 
             <div class="button-bar">
-                <paper-button view="month" on-tap="changeCalendarView">
+                <paper-button view="month" on-tap="_changeCalendarView">
                     <things-i18n-msg auto view="month" msgid="label.month" msg="{{tMonth}}">Month
                     </things-i18n-msg>
                 </paper-button>
-                <paper-button view="listYear" on-tap="changeCalendarView">
+                <paper-button view="listYear" on-tap="_changeCalendarView">
                     <things-i18n-msg auto view="listYear" msgid="label.calendar_list_year" msg="{{tListYear}}">List Year
                     </things-i18n-msg>
                 </paper-button>
-                <paper-button view="listMonth" on-tap="changeCalendarView">
+                <paper-button view="listMonth" on-tap="_changeCalendarView">
                     <things-i18n-msg auto view="listMonth" msgid="label.calendar_list_month" msg="{{tListMonth}}">List Month
                     </things-i18n-msg>
                 </paper-button>
-                <paper-button view="agendaWeek" on-tap="changeCalendarView">
+                <paper-button view="agendaWeek" on-tap="_changeCalendarView">
                     <things-i18n-msg auto view="listWeek" msgid="label.calendar_agenda_week" msg="{{tAgendaWeek}}">Agenda week
                     </things-i18n-msg>
                 </paper-button>
@@ -101,6 +101,7 @@
             properties: {
                 /**
                  * when locale changed view must be changed
+                 ****
                  * @type {String}
                  */
                 locale: {
@@ -112,6 +113,7 @@
                  * will bring the user to a view that represents the day/week.
                  * The destination views are automatically determined by the views that are in the header.
                  * However, they can be explicity defined using navLinkDayClick and navLinkWeekClick.
+                 *****
                  * @type {String}
                  */
                 navLinks: {
@@ -126,6 +128,7 @@
                  * eventDurationEditable instead.
                  * This option can be overridden on a per-event basis with the Event Object editable
                  * property.
+                 * *****
                  * */
                 editable: {
                     type: Boolean,
@@ -133,6 +136,7 @@
                 },
                 /**
                  * for render background color
+                 * *****
                  * @type {function}
                  */
                 eventBackgroundColorRender: {
@@ -147,6 +151,7 @@
 
                 /**
                  * for render font color
+                 * *****
                  * @type {function}
                  */
                 eventFontColorRender: {
@@ -161,6 +166,7 @@
 
                 /**
                  * for render border color
+                 * *****
                  * @type {function}
                  */
                 eventBorderColorRender: {
@@ -174,6 +180,7 @@
                 },
                 /**
                  * for event title field of response after schedule url called and ajax returned
+                 * *****
                  * @type {String}
                  */
                 eventTitleField: {
@@ -183,6 +190,7 @@
 
                 /**
                  * for event start datetime field of response after schedule url called and ajax returned
+                 * *****
                  * @type {String}
                  */
                 eventTimeField: {
@@ -199,14 +207,17 @@
                  * An integer value will limit the events to a specific number of rows.
                  * For the all-day section in the agenda views, a value of true will limit the number of
                  * events to 5. To fine-tune this, use View-Specific Options like this:
-                 * $('#calendar').fullCalendar({
-                 *   eventLimit: true, // for all non-agenda views
-                 *   views: {
-                 *     agenda: {
-                 *       eventLimit: 6 // adjust to 6 only for agendaWeek/agendaDay
-                 *       }
-                 *   }
-                 * });
+                 ****
+```js
+$('#calendar').fullCalendar({
+  eventLimit: true, // for all non-agenda views
+  views: {
+    agenda: {
+      eventLimit: 6 // adjust to 6 only for agendaWeek/agendaDay
+      }
+  }
+});
+```
                  */
                 eventLimit: {
                     type: Boolean,
@@ -214,6 +225,7 @@
                 },
                 /**
                  * condition for schedule url calling
+                 ****
                  * @type {Object}
                  */
                 eventQueryFields: {
@@ -221,6 +233,7 @@
                 },
                 /**
                  * url for get resource data
+                 ****
                  * @type {String}
                  */
                 scheduleUrl: {
@@ -229,6 +242,7 @@
                 },
                 /**
                  * condition for schedule url calling that add starttime and endtime
+                 *****
                  * @type {string}
                  */
                 queryFields: {
@@ -236,6 +250,7 @@
                 },
                 /**
                  * responsed events from resource url
+                 *****
                  * @type {Object}
                  */
                 events: {
@@ -246,6 +261,7 @@
                 },
                 /**
                  * renderred events on view
+                 *****
                  * @type {Object}
                  */
                 renderedEvents: {
@@ -255,6 +271,7 @@
                 },
                 /**
                  * bind when event drag and drop on calendar view
+                 *****
                  */
                 changedEvent: {
                     type: Object,
@@ -266,17 +283,28 @@
                 Things.CalendarBehavior,
             ],
             listeners: {
-                'things-calendar-event-drop': 'setRenderedEvents',
+                'things-calendar-event-drop': '_setRenderedEvents',
             },
             observers: [
-                'onQueryFieldChange(queryFields)',
-                'setEventQueryField(startDay,endDay, eventQueryFields)'
+                '_onQueryFieldChange(queryFields)',
+                '_setEventQueryField(startDay,endDay, eventQueryFields)'
             ],
             attached: function() {
                 this.initOptions();
             },
             /**
              * initialization calendar
+```js
+{
+  navLinks: this.navLinks, // can click day/week names to navigate views
+  editable: this.editable,
+  eventLimit: this.eventLimit, // allow "more" link when too many events
+  customButtons: this.customButtons,
+  buttonIcons: this.buttonIcons,
+  locale: this.locale,
+  header: false
+}
+```
              */
             initOptions: function() {
                 var options = {
@@ -292,8 +320,17 @@
                 this.set('options', options);
             },
             /**
+             * Fired when a new data response
+             *
+             * @event things-calendar-event-response
+             * @param {object} thingsCalendar things calendar's element
+             * @param {object} calendar fullCalendar Object
+             * @param {object} event items from ajax that responsed
+             */
+            /**
              * when resource data responsed then fire things-calendar-event-response
              * if not evt.defaultPrevented set events use responsed resources
+             * @param {Object} event
              */
             _handleScheduleResponse: function(event) {
                 var schedule = [];
@@ -314,8 +351,12 @@
             },
             /**
              * parsing EventQueryField and set start and endday if day changed
+             * @param  {String} startDay         date formated with timeFormat
+             * @param  {String} endDay           date formated with timeFormat
+             * @param  {Array} eventQueryFields  queryFields Array|null
+             * @return {null}
              */
-            setEventQueryField: function(startDay, endDay, eventQueryFields) {
+            _setEventQueryField: function(startDay, endDay, eventQueryFields) {
                 this.set('queryFields', null)
                 var queryFields = [];
                 var parsedQueryFields = '';
@@ -349,7 +390,7 @@
              * when locale changed set cenlendar locale use converted locale
              */
             _onLocaleChange: function(locale) {
-                locale = this.convertLocale(locale)
+                locale = this._convertLocale(locale)
 
                 if (this._calendar) {
                     this.setCalendarLocale(locale);
@@ -363,7 +404,7 @@
             /**
              * change view use value of target element with named 'view' attribute
              */
-            changeCalendarView: function(event) {
+            _changeCalendarView: function(event) {
                 this.changeView(event.target.attributes.getNamedItem('view').value);
             },
             /**
@@ -399,7 +440,7 @@
              * when event drag and drop bind changedEvent to changed event object and
              * bing all rederedEvent to renderedEvents
              */
-            setRenderedEvents: function(event) {
+            _setRenderedEvents: function(event) {
                 var events = this.getClientEvents();
                 var self = this;
                 this.set('changedEvent', event);
@@ -420,13 +461,13 @@
             /**
              * when QueryFieldChanged need to refresh event resources
              */
-            onQueryFieldChange: function(value) {
+            _onQueryFieldChange: function(value) {
                 if (value && value != '[]') this.refreshEvents();
             },
             /**
              * locale 변경시
              */
-            convertLocale: function(locale) {
+            _convertLocale: function(locale) {
                 if (locale == 'zh-CN') {
                     return 'zh-cn';
                 } else {
