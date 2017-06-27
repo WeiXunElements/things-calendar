@@ -1,7 +1,7 @@
 # things-calendar
 
-## 1. 설명
-### calendar를 쉬게 표현하기 위한 컴포너트로서 fullcalendar.js library가 포함됨
+## 1. Explanation
+### This is a component for easily displaying the calendar, in which includes the fullcalendar.js library.
 ```html
 <dom-module id="things-order-calendar">
   <template>
@@ -126,7 +126,7 @@
         'order-calendar.things-calendar-event-response' : 'scheduleDataChanged'
       },
       /**
-       * Schedule Data 변경시 타이틀 추가
+       * Add the title when changing the Schedule Data
        */
       scheduleDataChanged: function(event) {
         event.preventDefault();
@@ -153,37 +153,37 @@
 ```
 
 
-## 2. 개발
-### 2.1 Polymer-CLI 설치
+## 2. Development
+### 2.1 Install Polymer-CLI
 
 First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
 
-### 2.2 Application 수행
+### 2.2 Run Application
 
 ```
 $ polymer serve
 ```
 
-### 2.3 Application 빌드
+### 2.3 Build Application
 
 ```
 $ polymer build
 ```
 
-아래 명령어로 ` build/bundled`나 ` build/unbundled`에서 서버를 띄울수 있다.
+You can launch the server from `build/bundled` or `build/unbundled` with the following command:
 
 ```
 $ polymer serve build/bundled
 ```
 
-### 2.3 Running Tests
+### 2.4 Run Tests
 
 ```
 $ polymer test
 ```
 
-테스트는 [web-component-tester](https://github.com/Polymer/web-component-tester)에서 설명한데로 설정완료됨.
-아래 명령어로 테스트를 수행할 수 있다.
+The test has been set up as described in [web-component-tester](https://github.com/Polymer/web-component-tester).
+You can run the test with the following command.
 ```
 $ polymer test
 ```
