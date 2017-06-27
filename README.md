@@ -1,7 +1,7 @@
 # things-calendar
 
 ## 1. 설명
-### calendar를 쉬게 표현하기 위한 컴포너트로 fullcalendar.js library가 포함됨
+### calendar를 쉬게 표현하기 위한 컴포너트로서 fullcalendar.js library가 포함됨
 ```html
 <dom-module id="things-order-calendar">
   <template>
