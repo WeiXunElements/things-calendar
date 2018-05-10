@@ -321,7 +321,7 @@ Copyright © HatioLab Inc. All rights reserved.
                             // General Display
                             viewRender: fireEvent('thingsCalendarViewRender', ['view', 'element']),
                             viewDestroy: fireEvent('thingsCalendarViewDestroy', ['view', 'element']),
-                            // dayRender - modifies one of the arguments, pass it via options
+                            dayRender : fireEvent('thingsCalendarDayRender', ['date','cell']),
                             windowResize: fireEvent('thingsCalendarWindowResize', ['view']),
 
                             // Clicking & Hovering
