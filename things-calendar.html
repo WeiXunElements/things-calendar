@@ -1,207 +1,214 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../things-libraries/things-fullcalendar-css.html">
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../things-libraries/things-fullcalendar-css.html" />
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
 
-<link rel="import" href="./things-calendar-behavior.html">
+<link rel="import" href="./things-calendar-behavior.html" />
 
 <dom-module id="things-calendar">
-    <template>
-        <style include="fullcalendar-theme">
-             :host {
-                display: block;
-            }
+  <template>
+    <style include="fullcalendar-theme">
+      :host {
+        display: block;
+      }
 
-            .title {
-                @apply(--things-calendar-title);
-            }
+      .title {
+        @apply (--things-calendar-title);
+      }
 
-            .button-bar {
-                @apply(--things-calendar-button-bar);
-            }
+      .button-bar {
+        @apply (--things-calendar-button-bar);
+      }
 
-            paper-button {
-                @apply(--things-calendar-buttons);
-            }
+      paper-button {
+        @apply (--things-calendar-buttons);
+      }
 
-            paper-icon-button {
-                @apply(--things-calendar-buttons);
-            }
+      paper-icon-button {
+        @apply (--things-calendar-buttons);
+      }
 
-            #calendar {
-                @apply(--things-calendar);
-            }
+      #calendar {
+        @apply (--things-calendar);
+      }
 
-            #calendar th {
-                background-color: #f6f6f6;
-                font-size: 12px;
-                color: #666;
-                font-weight: normal;
-            }
+      #calendar th {
+        background-color: #f6f6f6;
+        font-size: 12px;
+        color: #666;
+        font-weight: normal;
+      }
 
-             ::shadow .fc-day-number {
-                margin-right: 5px;
-                font-size: 13px;
-            }
+      ::shadow .fc-day-number {
+        margin-right: 5px;
+        font-size: 13px;
+      }
 
-             ::shadow .fc-sun {
-                color: #e95d39
-            }
+      ::shadow .fc-sun {
+        color: #e95d39;
+      }
 
-             ::shadow .fc-sat {
-                color: #26a6dd
-            }
+      ::shadow .fc-sat {
+        color: #26a6dd;
+      }
 
-             ::shadow .fc-other-month {
-                background-color: #f4f4f4
-            }
+      ::shadow .fc-other-month {
+        background-color: #f4f4f4;
+      }
 
-             ::shadow .fc-event {
-                padding: 1px 5px;
-                border-radius: 7px;
-                font-size: 12px;
-            }
+      ::shadow .fc-event {
+        padding: 1px 5px;
+        border-radius: 7px;
+        font-size: 12px;
+      }
 
-             ::shadow .fc-today {
-                font-weight: bold
-            }
+      ::shadow .fc-today {
+        font-weight: bold;
+      }
+    </style>
+    <things-ajax
+      id="schedule"
+      query-fields="[[queryFields]]"
+      resource-url="[[scheduleUrl]]"
+      resource-action="index"
+      on-things-ajax-response="_handleScheduleResponse"
+    >
+    </things-ajax>
+    <div class="header">
+      <div class="title">[[viewTitle]]</div>
 
-        </style>
-        <things-ajax id="schedule" query-fields="[[queryFields]]" resource-url="[[scheduleUrl]]" resource-action="index" on-things-ajax-response="_handleScheduleResponse">
-        </things-ajax>
-        <div class="header">
-            <div class="title">[[viewTitle]]</div>
+      <div class="button-bar">
+        <paper-button view="month" on-tap="_changeCalendarView">
+          <things-i18n-msg auto view="month" msgid="label.month" msg="{{tMonth}}">Month </things-i18n-msg>
+        </paper-button>
+        <paper-button view="listYear" on-tap="_changeCalendarView">
+          <things-i18n-msg auto view="listYear" msgid="label.calendar_list_year" msg="{{tListYear}}"
+            >List Year
+          </things-i18n-msg>
+        </paper-button>
+        <paper-button view="listMonth" on-tap="_changeCalendarView">
+          <things-i18n-msg auto view="listMonth" msgid="label.calendar_list_month" msg="{{tListMonth}}"
+            >List Month
+          </things-i18n-msg>
+        </paper-button>
+        <paper-button view="agendaWeek" on-tap="_changeCalendarView">
+          <things-i18n-msg auto view="listWeek" msgid="label.calendar_agenda_week" msg="{{tAgendaWeek}}"
+            >Agenda week
+          </things-i18n-msg>
+        </paper-button>
+        <paper-icon-button id="previous" icon="chevron-left" on-transitionend="previous"></paper-icon-button>
+        <paper-icon-button id="next" icon="chevron-right" on-transitionend="next"></paper-icon-button>
+      </div>
+    </div>
+    <div id="calendar"></div>
+  </template>
 
-            <div class="button-bar">
-                <paper-button view="month" on-tap="_changeCalendarView">
-                    <things-i18n-msg auto view="month" msgid="label.month" msg="{{tMonth}}">Month
-                    </things-i18n-msg>
-                </paper-button>
-                <paper-button view="listYear" on-tap="_changeCalendarView">
-                    <things-i18n-msg auto view="listYear" msgid="label.calendar_list_year" msg="{{tListYear}}">List Year
-                    </things-i18n-msg>
-                </paper-button>
-                <paper-button view="listMonth" on-tap="_changeCalendarView">
-                    <things-i18n-msg auto view="listMonth" msgid="label.calendar_list_month" msg="{{tListMonth}}">List Month
-                    </things-i18n-msg>
-                </paper-button>
-                <paper-button view="agendaWeek" on-tap="_changeCalendarView">
-                    <things-i18n-msg auto view="listWeek" msgid="label.calendar_agenda_week" msg="{{tAgendaWeek}}">Agenda week
-                    </things-i18n-msg>
-                </paper-button>
-                <paper-icon-button id="previous" icon="chevron-left" on-transitionend="previous"></paper-icon-button>
-                <paper-icon-button id="next" icon="chevron-right" on-transitionend="next"></paper-icon-button>
-            </div>
-        </div>
-        <div id="calendar"></div>
-    </template>
+  <script>
+    Polymer({
+      is: 'things-calendar',
+      properties: {
+        /**
+         * when locale changed view must be changed
+         ****
+         * @type {String}
+         */
+        locale: {
+          type: String,
+          observer: '_onLocaleChange',
+        },
+        /**
+         * When true, day headings and weekNumbers will become clickable. When clicked, these links
+         * will bring the user to a view that represents the day/week.
+         * The destination views are automatically determined by the views that are in the header.
+         * However, they can be explicity defined using navLinkDayClick and navLinkWeekClick.
+         *****
+         * @type {String}
+         */
+        navLinks: {
+          type: Boolean,
+          value: true,
+        },
+        /**
+         * Determines whether the events on the calendar can be modified.
+         * Boolean, default: true
+         * This determines if the events can be dragged and resized. Enables/disables both at the same
+         * time. If you don't want both, use the more specific eventStartEditable and
+         * eventDurationEditable instead.
+         * This option can be overridden on a per-event basis with the Event Object editable
+         * property.
+         * *****
+         * */
+        editable: {
+          type: Boolean,
+          value: true,
+        },
+        /**
+         * for render background color
+         * *****
+         * @type {function}
+         */
+        eventBackgroundColorRender: {
+          type: Object,
+          value: function () {
+            // CSS color formats such #f00, #ff0000, rgb(255,0,0), or red.
+            return function (event, calendar) {
+              return '#1197C1';
+            };
+          },
+        },
 
-    <script>
-        Polymer({
-            is: 'things-calendar',
-            properties: {
-                /**
-                 * when locale changed view must be changed
-                 ****
-                 * @type {String}
-                 */
-                locale: {
-                    type: String,
-                    observer: '_onLocaleChange'
-                },
-                /**
-                 * When true, day headings and weekNumbers will become clickable. When clicked, these links
-                 * will bring the user to a view that represents the day/week.
-                 * The destination views are automatically determined by the views that are in the header.
-                 * However, they can be explicity defined using navLinkDayClick and navLinkWeekClick.
-                 *****
-                 * @type {String}
-                 */
-                navLinks: {
-                    type: Boolean,
-                    value: true
-                },
-                /**
-                 * Determines whether the events on the calendar can be modified.
-                 * Boolean, default: true
-                 * This determines if the events can be dragged and resized. Enables/disables both at the same
-                 * time. If you don't want both, use the more specific eventStartEditable and
-                 * eventDurationEditable instead.
-                 * This option can be overridden on a per-event basis with the Event Object editable
-                 * property.
-                 * *****
-                 * */
-                editable: {
-                    type: Boolean,
-                    value: true
-                },
-                /**
-                 * for render background color
-                 * *****
-                 * @type {function}
-                 */
-                eventBackgroundColorRender: {
-                    type: Object,
-                    value: function() {
-                        // CSS color formats such #f00, #ff0000, rgb(255,0,0), or red.
-                        return function(event, calendar) {
-                            return '#1197C1'
-                        };
-                    }
-                },
+        /**
+         * for render font color
+         * *****
+         * @type {function}
+         */
+        eventFontColorRender: {
+          type: Object,
+          value: function () {
+            // CSS color formats such #f00, #ff0000, rgb(255,0,0), or red.
+            return function (event, calendar) {
+              return 'red';
+            };
+          },
+        },
 
-                /**
-                 * for render font color
-                 * *****
-                 * @type {function}
-                 */
-                eventFontColorRender: {
-                    type: Object,
-                    value: function() {
-                        // CSS color formats such #f00, #ff0000, rgb(255,0,0), or red.
-                        return function(event, calendar) {
-                            return 'red'
-                        };
-                    }
-                },
+        /**
+         * for render border color
+         * *****
+         * @type {function}
+         */
+        eventBorderColorRender: {
+          type: Object,
+          value: function () {
+            // CSS color formats such #f00, #ff0000, rgb(255,0,0), or red.
+            return function (event, calendar) {
+              return '';
+            };
+          },
+        },
+        /**
+         * for event title field of response after schedule url called and ajax returned
+         * *****
+         * @type {String}
+         */
+        eventTitleField: {
+          type: String,
+          value: 'name',
+        },
 
-                /**
-                 * for render border color
-                 * *****
-                 * @type {function}
-                 */
-                eventBorderColorRender: {
-                    type: Object,
-                    value: function() {
-                        // CSS color formats such #f00, #ff0000, rgb(255,0,0), or red.
-                        return function(event, calendar) {
-                            return ''
-                        };
-                    }
-                },
-                /**
-                 * for event title field of response after schedule url called and ajax returned
-                 * *****
-                 * @type {String}
-                 */
-                eventTitleField: {
-                    type: String,
-                    value: 'name'
-                },
-
-                /**
-                 * for event start datetime field of response after schedule url called and ajax returned
-                 * *****
-                 * @type {String}
-                 */
-                eventTimeField: {
-                    type: String,
-                    value: 'plan_date'
-                },
-                /**
+        /**
+         * for event start datetime field of response after schedule url called and ajax returned
+         * *****
+         * @type {String}
+         */
+        eventTimeField: {
+          type: String,
+          value: 'plan_date',
+        },
+        /**
                  * Limits the number of events displayed on a day.
                  * When there are too many events, a link that looks like "+2 more" is displayed.
                  * The exact action that happens when the user clicks the link is determined by
@@ -223,80 +230,75 @@ $('#calendar').fullCalendar({
 });
 ```
                  */
-                eventLimit: {
-                    type: Boolean,
-                    value: false
-                },
-                /**
-                 * condition for schedule url calling
-                 ****
-                 * @type {Object}
-                 */
-                eventQueryFields: {
-                    type: Object
-                },
-                /**
-                 * url for get resource data
-                 ****
-                 * @type {String}
-                 */
-                scheduleUrl: {
-                    type: String,
-                    value: 'machine_checks'
-                },
-                /**
-                 * condition for schedule url calling that add starttime and endtime
-                 *****
-                 * @type {string}
-                 */
-                queryFields: {
-                    type: String,
-                },
-                /**
-                 * responsed events from resource url
-                 *****
-                 * @type {Object}
-                 */
-                events: {
-                    type: Array,
-                    value: [],
-                    notify: true,
-                    observer: '_onEventsChange'
-                },
-                /**
-                 * renderred events on view
-                 *****
-                 * @type {Object}
-                 */
-                renderedEvents: {
-                    type: Array,
-                    value: [],
-                    notify: true
-                },
-                /**
-                 * bind when event drag and drop on calendar view
-                 *****
-                 */
-                changedEvent: {
-                    type: Object,
-                    value: {},
-                    notify: true
-                }
-            },
-            behaviors: [
-                Things.CalendarBehavior,
-            ],
-            listeners: {
-                'things-calendar-event-drop': '_setRenderedEvents',
-            },
-            observers: [
-                '_onQueryFieldChange(queryFields)',
-                '_setEventQueryField(startDay,endDay, eventQueryFields)'
-            ],
-            attached: function() {
-                this.initOptions();
-            },
-            /**
+        eventLimit: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * condition for schedule url calling
+         ****
+         * @type {Object}
+         */
+        eventQueryFields: {
+          type: Object,
+        },
+        /**
+         * url for get resource data
+         ****
+         * @type {String}
+         */
+        scheduleUrl: {
+          type: String,
+          value: 'machine_checks',
+        },
+        /**
+         * condition for schedule url calling that add starttime and endtime
+         *****
+         * @type {string}
+         */
+        queryFields: {
+          type: String,
+        },
+        /**
+         * responsed events from resource url
+         *****
+         * @type {Object}
+         */
+        events: {
+          type: Array,
+          value: [],
+          notify: true,
+          observer: '_onEventsChange',
+        },
+        /**
+         * renderred events on view
+         *****
+         * @type {Object}
+         */
+        renderedEvents: {
+          type: Array,
+          value: [],
+          notify: true,
+        },
+        /**
+         * bind when event drag and drop on calendar view
+         *****
+         */
+        changedEvent: {
+          type: Object,
+          value: {},
+          notify: true,
+        },
+      },
+      behaviors: [Things.CalendarBehavior],
+      listeners: {
+        'things-calendar-event-drop': '_setRenderedEvents',
+      },
+      observers: ['_onQueryFieldChange(queryFields)', '_setEventQueryField(startDay,endDay, eventQueryFields)'],
+      attached: function () {
+        this.initOptions();
+      },
+      /**
              * initialization calendar
 ```js
 {
@@ -310,176 +312,173 @@ $('#calendar').fullCalendar({
 }
 ```
              */
-            initOptions: function() {
-                var options = {
-                    navLinks: this.navLinks, // can click day/week names to navigate views
-                    editable: this.editable,
-                    eventLimit: this.eventLimit, // allow "more" link when too many events
-                    customButtons: this.customButtons,
-                    buttonIcons: this.buttonIcons,
-                    locale: this.locale,
-                    // header:this.headerView
-                    header: false
-                }
-                this.set('options', options);
-            },
-            /**
-             * Fired when a new data response
-             *
-             * @event things-calendar-event-response
-             * @param {object} thingsCalendar things calendar's element
-             * @param {object} calendar fullCalendar Object
-             * @param {object} event items from ajax that responsed
-             */
-            /**
-             * when resource data responsed then fire things-calendar-event-response
-             * if not evt.defaultPrevented set events use responsed resources
-             * @param {Object} event
-             */
-            _handleScheduleResponse: function(event) {
-                var schedule = [];
-                schedule = event.detail.items;
-                if (schedule && schedule.length > 0) {
-                    var eventDetail = {
-                        thingsCalendar: this,
-                        calendar: this._calendar,
-                        event: schedule
-                    };
-                    var evt = this.fire('things-calendar-event-response', eventDetail, {
-                        cancelable: true
-                    });
-                    if (!evt.defaultPrevented) {
-                        this.set('events', event.detail.items);
-                    }
-                }
-            },
-            /**
-             * parsing EventQueryField and set start and endday if day changed
-             * @param  {String} startDay         date formated with timeFormat
-             * @param  {String} endDay           date formated with timeFormat
-             * @param  {Array} eventQueryFields  queryFields Array|null
-             * @return {null}
-             */
-            _setEventQueryField: function(startDay, endDay, eventQueryFields) {
-                this.set('queryFields', null)
-                var queryFields = [];
-                var parsedQueryFields = '';
-                queryFields = eventQueryFields.slice();
+      initOptions: function () {
+        var options = {
+          navLinks: this.navLinks, // can click day/week names to navigate views
+          editable: this.editable,
+          eventLimit: this.eventLimit, // allow "more" link when too many events
+          customButtons: this.customButtons,
+          buttonIcons: this.buttonIcons,
+          locale: this.locale,
+          // header:this.headerView
+          header: false,
+        };
+        this.set('options', options);
+      },
+      /**
+       * Fired when a new data response
+       *
+       * @event things-calendar-event-response
+       * @param {object} thingsCalendar things calendar's element
+       * @param {object} calendar fullCalendar Object
+       * @param {object} event items from ajax that responsed
+       */
+      /**
+       * when resource data responsed then fire things-calendar-event-response
+       * if not evt.defaultPrevented set events use responsed resources
+       * @param {Object} event
+       */
+      _handleScheduleResponse: function (event) {
+        var schedule = [];
+        schedule = event.detail.items;
+        if (schedule && schedule.length > 0) {
+          var eventDetail = {
+            thingsCalendar: this,
+            calendar: this._calendar,
+            event: schedule,
+          };
+          var evt = this.fire('things-calendar-event-response', eventDetail, {
+            cancelable: true,
+          });
+          if (!evt.defaultPrevented) {
+            this.set('events', event.detail.items);
+          }
+        }
+      },
+      /**
+       * parsing EventQueryField and set start and endday if day changed
+       * @param  {String} startDay         date formated with timeFormat
+       * @param  {String} endDay           date formated with timeFormat
+       * @param  {Array} eventQueryFields  queryFields Array|null
+       * @return {null}
+       */
+      _setEventQueryField: function (startDay, endDay, eventQueryFields) {
+        this.set('queryFields', null);
+        var queryFields = [];
+        var parsedQueryFields = '';
+        queryFields = eventQueryFields.slice();
 
-                if (queryFields) {
-                    queryFields = (typeof(queryFields) == 'string') ? JSON.parse(queryFields) : queryFields;
-                } else {
-                    queryFields = [];
-                }
+        if (queryFields) {
+          queryFields = typeof queryFields == 'string' ? JSON.parse(queryFields) : queryFields;
+        } else {
+          queryFields = [];
+        }
 
-                if (startDay && endDay && this.oldStart != startDay && this.oldEnd != endDay) {
-                    queryFields.push({
-                        name: this.eventTimeField,
-                        operator: 'gte',
-                        value: startDay
-                    });
-                    queryFields.push({
-                        name: this.eventTimeField,
-                        operator: 'lte',
-                        value: endDay
-                    });
-                    this.oldStart = startDay;
-                    this.oldEnd = endDay;
-                }
-                parsedQueryFields = JSON.stringify(queryFields);
-                this.set('queryFields', parsedQueryFields)
+        if (startDay && endDay && this.oldStart != startDay && this.oldEnd != endDay) {
+          queryFields.push({
+            name: this.eventTimeField,
+            operator: 'gte',
+            value: startDay,
+          });
+          queryFields.push({
+            name: this.eventTimeField,
+            operator: 'lte',
+            value: endDay,
+          });
+          this.oldStart = startDay;
+          this.oldEnd = endDay;
+        }
+        parsedQueryFields = JSON.stringify(queryFields);
+        this.set('queryFields', parsedQueryFields);
+      },
+      /**
+       * when locale changed set cenlendar locale use converted locale
+       */
+      _onLocaleChange: function (locale) {
+        locale = this._convertLocale(locale);
 
-            },
-            /**
-             * when locale changed set cenlendar locale use converted locale
-             */
-            _onLocaleChange: function(locale) {
-                locale = this._convertLocale(locale)
-
-                if (this._calendar) {
-                    this.setCalendarLocale(locale);
-                } else {
-                    this.initOptions();
-                    this.scopeSubtree(this.$.calendar, true);
-                    this._calendar = $(this.$.calendar);
-                    this.setCalendarLocale(locale);
-                }
-            },
-            /**
-             * change view use value of target element with named 'view' attribute
-             */
-            _changeCalendarView: function(event) {
-                this.changeView(event.target.attributes.getNamedItem('view').value);
-            },
-            /**
-             * when events change convert envents data to calendar object, object propeties of
-             * events will be remain
-             */
-            _onEventsChange: function(events) {
-                var self = this;
-                this.renderedEvents = events.map(function(object) {
-                    object.title = object[self.eventTitleField],
-                        object.start = moment(object[self.eventTimeField]),
-                        object.borderColor = '#ffffff',
-                        object.allDay = true,
-                        object.schedule = object,
-                        object.backgroundColor = self.eventBackgroundColorRender(object, self._calendar),
-                        object.textColor = self.eventFontColorRender(object, self._calendar),
-                        object.borderColor = self.eventBorderColorRender(object, self._calendar)
-                    return object
-                });
-
-                if (this._calendar) {
-                    this.removeEventSources();
-                    this.addEventSource(this.renderedEvents);
-                } else {
-                    this.scopeSubtree(this.$.calendar, true);
-                    this._calendar = $(this.$.calendar);
-                    this.initOptions();
-                    this.removeEventSources();
-                    this.addEventSource(this.renderedEvents);
-                }
-            },
-            /**
-             * when event drag and drop bind changedEvent to changed event object and
-             * bing all rederedEvent to renderedEvents
-             */
-            _setRenderedEvents: function(event) {
-                var events = this.getClientEvents();
-                var self = this;
-                this.set('changedEvent', event);
-
-                events.map(function(object) {
-                    if (self.eventTimeField) {
-                        object[self.eventTimeField] = object.start.format(self.timeFormat);
-                    }
-                })
-                this.set('renderedEvents', events)
-            },
-            /**
-             * refresh event resources
-             */
-            refreshEvents: function() {
-                this.$.schedule.generateRequest();
-            },
-            /**
-             * when QueryFieldChanged need to refresh event resources
-             */
-            _onQueryFieldChange: function(value) {
-                if (value && value != '[]') this.refreshEvents();
-            },
-            /**
-             * locale 변경시
-             */
-            _convertLocale: function(locale) {
-                if (locale == 'zh-CN') {
-                    return 'zh-cn';
-                } else {
-                    return locale.substr(0, 2);
-                }
-            },
+        if (this._calendar) {
+          this.setCalendarLocale(locale);
+        } else {
+          this.initOptions();
+          this.scopeSubtree(this.$.calendar, true);
+          this._calendar = $(this.$.calendar);
+          this.setCalendarLocale(locale);
+        }
+      },
+      /**
+       * change view use value of target element with named 'view' attribute
+       */
+      _changeCalendarView: function (event) {
+        this.changeView(event.target.attributes.getNamedItem('view').value);
+      },
+      /**
+       * when events change convert envents data to calendar object, object propeties of
+       * events will be remain
+       */
+      _onEventsChange: function (events) {
+        var self = this;
+        this.renderedEvents = events.map(function (object) {
+          (object.title = object[self.eventTitleField]),
+            (object.start = moment(object[self.eventTimeField])),
+            (object.borderColor = '#ffffff'),
+            (object.allDay = true),
+            (object.schedule = object),
+            (object.backgroundColor = self.eventBackgroundColorRender(object, self._calendar)),
+            (object.textColor = self.eventFontColorRender(object, self._calendar)),
+            (object.borderColor = self.eventBorderColorRender(object, self._calendar));
+          return object;
         });
 
-    </script>
+        if (this._calendar) {
+          this.removeEventSources();
+          this.addEventSource(this.renderedEvents);
+        } else {
+          this.scopeSubtree(this.$.calendar, true);
+          this._calendar = $(this.$.calendar);
+          this.initOptions();
+          this.removeEventSources();
+          this.addEventSource(this.renderedEvents);
+        }
+      },
+      /**
+       * when event drag and drop bind changedEvent to changed event object and
+       * bing all rederedEvent to renderedEvents
+       */
+      _setRenderedEvents: function (event) {
+        var events = this.getClientEvents();
+        var self = this;
+        this.set('changedEvent', event);
 
+        events.map(function (object) {
+          if (self.eventTimeField) {
+            object[self.eventTimeField] = object.start.format(self.timeFormat);
+          }
+        });
+        this.set('renderedEvents', events);
+      },
+      /**
+       * refresh event resources
+       */
+      refreshEvents: function () {
+        this.$.schedule.generateRequest();
+      },
+      /**
+       * when QueryFieldChanged need to refresh event resources
+       */
+      _onQueryFieldChange: function (value) {
+        if (value && value != '[]') this.refreshEvents();
+      },
+      /**
+       * locale 변경시
+       */
+      _convertLocale: function (locale) {
+        if (locale == 'zh-CN') {
+          return 'zh-cn';
+        } else {
+          return locale.substr(0, 2);
+        }
+      },
+    });
+  </script>
 </dom-module>
