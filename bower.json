@@ -1,6 +1,6 @@
 {
   "name": "things-calendar",
-  "version": "v2.2.2",
+  "version": "v2.2.3",
   "authors": [
     "Shenzhen Weixun"
   ],
@@ -17,8 +17,8 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.2.0",
-    "things-ajax": "ThingsElements/things-ajax",
-    "things-libraries": "ThingsElements/things-libraries#^2.0.0"
+    "things-ajax": "WeiXunElements/things-ajax",
+    "things-libraries": "WeiXunElements/things-libraries#^2.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
